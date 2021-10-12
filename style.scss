@@ -1,0 +1,98 @@
+@import "reset";
+
+// KINTAMIEJI
+$white: #fff;
+$green: #2ecc71;
+$font: "Roboto";
+$radius: 2px;
+
+@mixin bgColor($color, $opacity) {
+  background-color: rgba($color, $opacity);
+}
+
+@mixin card() {
+  background-color: $white;
+  border-radius: $radius;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+// END OF RESET
+body {
+  background-color: #ecf0f1;
+  font-family: $font, sans-serif;
+
+  form {
+    max-width: 600px;
+    margin: 100px auto 50px auto;
+
+    input {
+      display: block;
+      width: 100%;
+      border: 0;
+      padding: 15px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-family: inherit;
+      font-size: 20px;
+    }
+
+    button {
+      width: 100%;
+      @include bgColor($green, 0.8);
+      cursor: pointer;
+      font-family: inherit;
+      color: $white;
+      font-size: 24px;
+      padding: 15px;
+      border: 0;
+    }
+  }
+
+  .menu {
+    max-width: 1024px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 15px;
+    grid-row-gap: 15px;
+
+    .card {
+      @include card;
+      padding: 15px;
+
+      .controls {
+        display: flex;
+        margin-bottom: 10px;
+        justify-content: right;
+
+        .icon {
+          width: 24px;
+          height: auto;
+          margin-left: 10px;
+          cursor: pointer;
+          opacity: 0.6;
+        }
+
+        .icon:hover {
+          opacity: 1;
+        }
+      }
+
+      h2 {
+        font-weight: 600;
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      ul {
+        li {
+          line-height: 1.5;
+
+          b {
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }
+}

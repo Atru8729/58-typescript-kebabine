@@ -3,13 +3,29 @@ class Produktas {
         this.kaina = kaina;
         this.svoris = svoris;
         this.pavadinimas = pavadinimas;
-        this.barcode = 100000 + Math.round(Math.random() * 10000);
+        this._barcode = 100000 + Math.round(Math.random() * 10000);
     }
-    spausdintiDuomenis() {
-        console.log(`Produktas: ${this.pavadinimas}`);
-        console.log(`Barkodas: ${this.barcode}`);
-        console.log(`Svoris: ${this.svoris} g.`);
-        console.log(`Kaina: ${this.kaina} eur.`);
+    get barcode() {
+        return this._barcode;
+    }
+    spausdintiDuomenis(element) {
+        if (element) {
+            element.innerHTML += `
+                <div class="card">
+                    <div class="controls">
+                        <img onclick="istrintiProdukta(${this._barcode})" class="icon delete" src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png">
+                        <img onclick="kopijuotiProdukta()" class="icon copy" src="https://cdn-icons-png.flaticon.com/512/54/54702.png">
+                    </div>
+                
+                    <h2>${this.pavadinimas}</h2>
+                    
+                    <ul>
+                        <li>Barkodas: <b>${this._barcode}</b></li>
+                        <li>Svoris: <b>${this.svoris} g.</b></li>
+                        <li>Kaina: <b>${this.kaina} eur.</b></li>
+                    </ul>
+                </div>`;
+        }
     }
 }
 var BulvytesTipas;
@@ -30,7 +46,7 @@ class B extends A {
 }
 class Bulvytes extends Produktas {
     constructor(kiekis, tipas = BulvytesTipas.Lazdeles) {
-        super('Bulvytės', 150, 2);
+        super("Bulvytės", 150, 2);
         this.tipas = tipas;
         this.kiekis = kiekis;
     }
@@ -38,7 +54,7 @@ class Bulvytes extends Produktas {
         super.spausdintiDuomenis();
         console.log(`Kiekis: ${this.kiekis}`);
         console.log(`Tipas: ${this.tipas}`);
-        console.log('-------');
+        console.log("-------");
     }
 }
 var PadazoTipas;
@@ -60,31 +76,55 @@ class Padazas extends Produktas {
 }
 class Kebabas extends Produktas {
     constructor(svoris = 700) {
-        super('Kebabas', svoris, 4.5);
+        super("Kebabas", svoris, 4.5);
         this.padazai = [];
     }
     pridetiPadaza(padazas) {
         this.padazai.push(padazas);
     }
+    ;
     spausdintiDuomenis() {
         super.spausdintiDuomenis();
-        console.log('Padažai:');
-        console.log('================');
+        console.log("Padažai:");
+        console.log("================");
         for (const padazas of this.padazai) {
             padazas.spausdintiDuomenis();
-            console.log('---');
+            console.log("---");
         }
-        console.log('================');
+        console.log("================");
     }
 }
-const bulvytes = new Bulvytes(14, BulvytesTipas.Puseles);
-const kebabas = new Kebabas(667);
-const velniskasPadazas = new Padazas(PadazoTipas.Astrus, 'Velniskas');
-const dieviskasPadazas = new Padazas(PadazoTipas.Cesnakinis, 'Dieviskas');
-kebabas.pridetiPadaza(velniskasPadazas);
-kebabas.pridetiPadaza(dieviskasPadazas);
-kebabas.spausdintiDuomenis();
-var PitosTipas;
-(function (PitosTipas) {
-    PitosTipas[PitosTipas["PilnoGrudo"] = 0] = "PilnoGrudo";
-})(PitosTipas || (PitosTipas = {}));
+const UI = {
+    nameInput: document.getElementById("produktoPavadinimas"),
+    priceInput: document.getElementById("produktoKaina"),
+    weightInput: document.getElementById("produktoSvoris"),
+    addButton: document.getElementById("pridetiProdukta"),
+    menuContainer: document.querySelector(".menu")
+};
+let produktai = [];
+UI.addButton.addEventListener("click", (e) => {
+    const pavadinimas = UI.nameInput.value;
+    const svoris = Number(UI.weightInput.value);
+    const kaina = Number(UI.priceInput.value);
+    const pradzia = Date.now();
+    const naujasProduktas = new Produktas(pavadinimas, svoris, kaina);
+    produktai.push(naujasProduktas);
+    atvaizduotiProduktus();
+    const pabaiga = Date.now();
+    const skirtumas = (pabaiga - pradzia) / 1000;
+    console.log(`Praėjo ${skirtumas} sek.`);
+});
+function atvaizduotiProduktus() {
+    UI.menuContainer.innerHTML = "";
+    for (const produktas of produktai) {
+        produktas.spausdintiDuomenis(UI.menuContainer);
+    }
+}
+function kopijuotiProdukta() {
+    console.log("Kopijuoti produktą...");
+}
+function istrintiProdukta(barcode) {
+    console.log("Trinti produktą...", barcode);
+    produktai = produktai.filter((produktas) => produktas.barcode !== barcode);
+    atvaizduotiProduktus();
+}
